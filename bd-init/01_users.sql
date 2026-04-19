@@ -9,6 +9,7 @@
 --    This user will be used on the pgAdmin
 CREATE USER db_admin WITH PASSWORD 'admin_password' CREATEDB CREATEROLE;
 GRANT ALL PRIVILEGES ON DATABASE turtledb TO db_admin;
+GRANT ALL ON SCHEMA public TO db_admin;
 -- 2. The Prisma User: A user that will be used by the prisma client ONLY.
 -- Therefore, it will only have the necessary privileges for the tasks it will do.
 CREATE USER prisma_user WITH PASSWORD 'prisma_password';
