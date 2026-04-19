@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { InventoryModule } from './inventory/inventory.module';
-
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [InventoryModule],
+  imports: [ConfigModule.forRoot(), InventoryModule],
   controllers: [AppController],
   providers: [AppService],
 })
