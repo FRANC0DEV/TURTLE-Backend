@@ -1,22 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Warehouse } from './entities/warehouse.entity';
-import { CreateWarehouseDto } from './dto/create-warehouse.dto';
-import { randomUUID } from 'node:crypto';
 import { ListWarehousesDto } from './dto/list-warehouses.dto';
-
+import { Prisma } from 'src/generated/prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class WarehouseService {
-  private readonly warehouses: Warehouse[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(warehouse: CreateWarehouseDto): void {
-    const uuid = randomUUID();
-    this.warehouses.push({
-      id: uuid,
-      ...warehouse,
-    });
+  async create(data: Prisma.warehouseCreateInput) {
+    return this.prisma.warehouse.create({ data });
   }
 
-  findAll(listWarehouseDto:ListWarehousesDto): Warehouse[] {
-    return this.warehouses;
+  async findAll(listWarehouseDto: ListWarehousesDto) {
+    return this.prisma.warehouse.findMany({});
   }
 }
