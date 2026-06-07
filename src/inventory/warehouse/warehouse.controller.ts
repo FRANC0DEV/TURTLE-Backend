@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  HttpCode,
-  Body,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Body, Query } from '@nestjs/common';
 import { CreateWarehouseDto } from './dto/create-warehouse.dto';
 import { ListWarehousesDto } from './dto/list-warehouses.dto';
 import { WarehouseService } from './warehouse.service';
