@@ -1,98 +1,322 @@
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://img.icons8.com/fluency/96/turtle.png">
+    <img src="https://img.icons8.com/color/96/turtle.png" width="120" alt="TURTLE Logo" />
+  </picture>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<h1 align="center">🐢 TURTLE Backend</h1>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <em>Restaurant Inventory & Operations Management API</em>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white" alt="NestJS" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white" alt="Jest" />
+</p>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 📋 Table of Contents
 
-```bash
-$ npm install
+- [About](#-about)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [API Endpoints](#-api-endpoints)
+- [Database Schema](#-database-schema)
+- [Scripts](#-scripts)
+- [Testing](#-testing)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
+
+---
+
+## 🧩 About
+
+**TURTLE** is a backend service designed for restaurant management — handling inventory, supplies, stock, warehouse locations, suppliers, menu items, and customer orders.
+
+Built with **NestJS** and **Prisma** on **PostgreSQL**, the API provides a clean modular foundation that can scale from a single restaurant to a multi-branch operation.
+
+The name **TURTLE** reflects the philosophy: *reliable, steady, and built to last*.
+
+---
+
+## ⚙️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| [NestJS](https://nestjs.com/) v11 | Application framework |
+| [TypeScript](https://www.typescriptlang.org/) v5 | Language |
+| [Prisma](https://www.prisma.io/) v7 | ORM & database client |
+| [PostgreSQL](https://www.postgresql.org/) 18 | Database |
+| [Docker](https://www.docker.com/) / [Compose](https://docs.docker.com/compose/) | Local infrastructure |
+| [pgAdmin](https://www.pgadmin.org/) 4 | Database administration UI |
+| [Jest](https://jestjs.io/) v30 | Testing framework |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│                   NestJS App                     │
+│  ┌───────────┐  ┌───────────┐  ┌───────────┐   │
+│  │ Inventory  │  │  Prisma   │  │  Config   │   │
+│  │  Module    │  │  Module   │  │  Module   │   │
+│  └─────┬─────┘  └─────┬─────┘  └───────────┘   │
+│        │              │                          │
+│  ┌─────┴──────────────┴─────┐                    │
+│  │     WarehouseModule      │                    │
+│  │  ┌──────────────────┐    │                    │
+│  │  │ WarehouseController│   │                    │
+│  │  ├──────────────────┤    │                    │
+│  │  │ WarehouseService  │    │                    │
+│  │  └──────────────────┘    │                    │
+│  └──────────────────────────┘                    │
+│  ┌───────────┐  ┌───────────┐                    │
+│  │ Supplies  │  │   Stock   │                    │
+│  │  Module   │  │  Module   │  ← Scaffolded      │
+│  └───────────┘  └───────────┘                    │
+└──────────────────────┬──────────────────────────┘
+                       │
+┌──────────────────────┴──────────────────────────┐
+│             PostgreSQL (via Prisma)              │
+│  ┌──────────┐ ┌──────────┐ ┌────────────────┐   │
+│  │warehouses│ │menu_items│ │internal_supplies│   │
+│  ├──────────┤ ├──────────┤ ├────────────────┤   │
+│  │  ...     │ │  orders  │ │   suppliers    │   │
+│  └──────────┘ └──────────┘ └────────────────┘   │
+└──────────────────────────────────────────────────┘
 ```
 
-## Compile and run the project
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** ≥ 22
+- **npm** ≥ 10
+- **Docker** & **Docker Compose** (for PostgreSQL)
+
+### 1. Clone & Install
+
+```bash
+git clone <repo-url>
+cd TURTLE-Backend
+npm install
+```
+
+### 2. Configure Environment
+
+Copy the template and adjust if needed:
+
+```bash
+cp .env.template .env
+```
+
+### 3. Start the Database
+
+```bash
+docker compose up -d
+```
+
+> Starts PostgreSQL on port `5432` (configurable via `.env`).  
+> Optionally, launch pgAdmin with: `docker compose --profile dbClient up -d`
+
+### 4. Push Schema & Generate Client
+
+```bash
+npx prisma db push
+npx prisma generate
+```
+
+### 5. Run the Server
 
 ```bash
 # development
-$ npm run start
+npm run start
 
-# watch mode
-$ npm run start:dev
+# watch mode (auto-reload)
+npm run start:dev
 
-# production mode
-$ npm run start:prod
+# production
+npm run start:prod
 ```
 
-## Run tests
+The API will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## 🌱 Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://prisma_user:prisma_password@localhost:5432/turtledb` | Prisma datasource URL |
+| `HOST_POSTGRES_PORT` | `5432` | Host port for PostgreSQL |
+| `POSTGRES_USER` | `postgres` | PostgreSQL superuser |
+| `POSTGRES_PASSWORD` | *(auto-generated)* | Superuser password |
+| `POSTGRES_DB` | `turtledb` | Database name |
+| `HOST_PGADMIN_PORT` | `80` | pgAdmin web UI port |
+| `PGADMIN_DEFAULT_EMAIL` | `admin@admin.com` | pgAdmin login email |
+| `PGADMIN_DEFAULT_PASSWORD` | `admin_password` | pgAdmin login password |
+| `PORT` | `3000` | Application HTTP port |
+
+---
+
+## 📡 API Endpoints
+
+| Method | Path | Description | Status |
+|---|---|---|---|
+| `GET` | `/` | Health check / Hello World | ✅ |
+| `GET` | `/warehouse` | List warehouses (_query: `name`, `page`_) | ✅ |
+| `POST` | `/warehouse` | Create a warehouse | ✅ |
+| — | `/supplies/*` | Supplies CRUD _(coming soon)_ | 🚧 |
+| — | `/stock/*` | Stock management _(coming soon)_ | 🚧 |
+
+### Example: Create a Warehouse
+
+```bash
+curl -X POST http://localhost:3000/warehouse \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Main Storage",
+    "address": "Av. Principal 123",
+    "description": "Downtown warehouse"
+  }'
+```
+
+### Example: List Warehouses
+
+```bash
+curl "http://localhost:3000/warehouse?name=Main&page=1"
+```
+
+---
+
+## 🗄️ Database Schema
+
+The full schema defines **17 tables** covering the restaurant domain:
+
+```
+restaurant_table        → Dining tables & QR tokens
+menu_items              → Menu with pricing, types (combo/single)
+menu_item_tags          → Tag taxonomy for menu items
+menu_item_ingredients   → BOM linking menu items to supplies
+internal_supplies       → Inventory items with stock tracking
+internal_supply_tags    → Tag taxonomy for supplies
+suppliers               → Vendor registry (RUC, company)
+supplier_catalog_items  → Vendor product catalog & pricing
+units_of_measurement    → UOM catalog
+storage_rooms           → Warehouse storage locations
+internal_supplies_location → Stock per storage room
+customer_order          → Orders with payments, statuses
+customer_order_items    → Order line items
+combo_description       → Combo item composition
+```
+
+The Prisma client is generated from `prisma/schema.prisma`.
+
+---
+
+## 📜 Scripts
+
+| Command | Description |
+|---|---|
+| `npm run start` | Start the app |
+| `npm run start:dev` | Start in watch mode |
+| `npm run start:prod` | Start production build |
+| `npm run build` | Compile the project |
+| `npm run test` | Run unit tests |
+| `npm run test:e2e` | Run end-to-end tests |
+| `npm run test:cov` | Run tests with coverage |
+| `npm run lint` | Lint and auto-fix |
+| `npm run format` | Format code with Prettier |
+
+---
+
+## 🧪 Testing
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
-# e2e tests
-$ npm run test:e2e
+# e2e tests (requires running DB)
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# with coverage
+npm run test:cov
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 📁 Project Structure
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```
+TURTLE-Backend/
+├── src/
+│   ├── main.ts                    # Entry point
+│   ├── app.module.ts              # Root module
+│   ├── app.controller.ts          # Root controller
+│   ├── app.service.ts             # Root service
+│   ├── config/                    # Configuration
+│   ├── inventory/
+│   │   ├── inventory.module.ts
+│   │   ├── warehouse/             # ✅ Implemented
+│   │   │   ├── warehouse.controller.ts
+│   │   │   ├── warehouse.service.ts
+│   │   │   ├── dto/
+│   │   │   └── entities/
+│   │   ├── supplies/              # 🚧 Scaffolded
+│   │   └── stock/                 # 🚧 Scaffolded
+│   ├── prisma/
+│   │   ├── prisma.module.ts
+│   │   └── prisma.service.ts
+│   └── generated/prisma/          # Auto-generated Prisma client
+├── prisma/
+│   ├── schema.prisma              # Prisma schema
+│   └── config.ts                  # Prisma config
+├── database/
+│   └── scripts/
+│       ├── initialization/        # Docker init SQL
+│       ├── schema/                # Full schema DDL
+│       └── seed/                  # Seed data
+├── docker-compose.yml             # PostgreSQL + pgAdmin
+├── .env.template                  # Environment template
+├── tsconfig.json
+├── nest-cli.json
+├── eslint.config.mjs
+└── package.json
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🤝 Contributing
 
-Check out a few resources that may come in handy when working with NestJS:
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Commit your changes: `git commit -m "feat: add my feature"`
+4. Push: `git push origin feat/my-feature`
+5. Open a Pull Request.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Guidelines
 
-## Support
+- Follow the existing code style (Prettier + ESLint).
+- Write tests for new functionality.
+- Keep modules loosely coupled.
+- Use the Prisma service for all database access.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+<p align="center">
+  Built with ❤️ using <a href="https://nestjs.com/">NestJS</a>
+</p>
