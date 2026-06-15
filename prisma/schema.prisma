@@ -8,9 +8,238 @@ datasource db {
   provider = "postgresql"
 }
 
-model warehouse {
-  id          Int     @id @default(autoincrement())
-  name        String  @db.VarChar(100)
-  description String?
-  address     String  @db.VarChar(255)
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model combo_description {
+  combo_description_id                                   Int        @id(map: "combo_description_pk") @default(autoincrement())
+  equivalence_factor                                     Decimal    @db.Decimal
+  menu_item_id                                           Int
+  combo_item_id                                          Int
+  menu_items_combo_description_combo_item_idTomenu_items menu_items @relation("combo_description_combo_item_idTomenu_items", fields: [combo_item_id], references: [menu_item_id], onDelete: Cascade, onUpdate: NoAction, map: "combo_description_menu_items_combo_fk")
+  menu_items_combo_description_menu_item_idTomenu_items  menu_items @relation("combo_description_menu_item_idTomenu_items", fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade, onUpdate: NoAction, map: "combo_description_menu_items_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model customer_order {
+  customer_order_id    Int                                @id(map: "customer_order_pk") @default(autoincrement())
+  created_at           DateTime                           @default(now()) @db.Timestamp(6)
+  payment_status       customer_order_payment_status_type @default(pending)
+  status               customer_order_status_type         @default(pending)
+  subtotal             Decimal                            @default(0.00) @db.Decimal(10, 2)
+  tax                  Decimal                            @default(0.00) @db.Decimal(10, 2)
+  customer_name        String                             @db.VarChar
+  customer_id          String                             @db.VarChar
+  restaurant_table_id  Int?
+  order_type           customer_order_type
+  restaurant_table     restaurant_table?                  @relation(fields: [restaurant_table_id], references: [restaurant_table_id], onDelete: Restrict, onUpdate: NoAction, map: "customer_order_restaurant_table_fk")
+  customer_order_items customer_order_items[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model customer_order_items {
+  customer_order_item_id Int                             @id(map: "customer_order_details_pk") @default(autoincrement())
+  quantity               Int                             @db.SmallInt
+  customer_comments      String?                         @db.VarChar
+  status                 customer_order_item_status_type @default(pending)
+  customer_order_id      Int
+  menu_item_id           Int
+  customer_order         customer_order                  @relation(fields: [customer_order_id], references: [customer_order_id], onDelete: Cascade, onUpdate: NoAction, map: "customer_order_items_customer_order_fk")
+  menu_items             menu_items                      @relation(fields: [menu_item_id], references: [menu_item_id], onUpdate: NoAction, map: "customer_order_items_menu_items_fk")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model internal_supplies {
+  internal_supply_id         Int                          @id(map: "internal_supplies_pk") @default(autoincrement())
+  code                       String                       @unique(map: "internal_supplies_unique") @db.VarChar
+  name                       String                       @db.VarChar
+  image_url                  String?
+  max_stock                  Decimal                      @db.Decimal(10, 3)
+  min_stock                  Decimal                      @default(0) @db.Decimal(10, 3)
+  unit_of_measurement_id     Int
+  current_stock              Decimal                      @default(0) @db.Decimal(10, 3)
+  units_of_measurement       units_of_measurement         @relation(fields: [unit_of_measurement_id], references: [unit_of_measurement_id], onUpdate: NoAction, map: "internal_supplies_units_of_measurement_fk")
+  internal_supplies_location internal_supplies_location[]
+  menu_item_ingredients      menu_item_ingredients[]
+  supplier_catalog_items     supplier_catalog_items[]
+  supply_tagging             supply_tagging[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model internal_supplies_location {
+  internal_supplies_location_id Int               @id(map: "internal_supplies_location_pk") @default(autoincrement())
+  current_stock                 Decimal           @default(0) @db.Decimal(10, 3)
+  storage_room_id               Int
+  internal_supply_id            Int
+  internal_supplies             internal_supplies @relation(fields: [internal_supply_id], references: [internal_supply_id], onDelete: Cascade, onUpdate: NoAction, map: "internal_supplies_location_internal_supplies_fk")
+  storage_rooms                 storage_rooms     @relation(fields: [storage_room_id], references: [storage_room_id], onDelete: Cascade, onUpdate: NoAction, map: "internal_supplies_location_storage_rooms_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model internal_supply_tags {
+  internal_supply_tag_id Int              @id(map: "internal_supply_tags_pk") @default(autoincrement())
+  name                   String           @unique(map: "internal_supply_tags_unique") @db.VarChar
+  description            String           @db.VarChar
+  supply_tagging         supply_tagging[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model menu_item_ingredients {
+  menu_item_ingredient_id    Int               @id(map: "menu_item_ingredients_pk") @default(autoincrement())
+  equivalence_factor         Decimal           @db.Decimal
+  internal_supply_id         Int
+  menu_item_id               Int
+  storage_room_to_extract_id Int
+  internal_supplies          internal_supplies @relation(fields: [internal_supply_id], references: [internal_supply_id], onDelete: Cascade, onUpdate: NoAction, map: "menu_item_ingredients_internal_supplies_fk")
+  menu_items                 menu_items        @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade, onUpdate: NoAction, map: "menu_item_ingredients_menu_items_fk")
+  storage_rooms              storage_rooms     @relation(fields: [storage_room_to_extract_id], references: [storage_room_id], onUpdate: NoAction, map: "menu_item_ingredients_storage_rooms_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model menu_item_tagging {
+  menu_item_tagging_id Int            @id(map: "menu_item_tagging_pk") @default(autoincrement())
+  menu_item_tag_id     Int
+  menu_item_id         Int
+  menu_item_tags       menu_item_tags @relation(fields: [menu_item_tag_id], references: [menu_item_tag_id], onDelete: Cascade, onUpdate: NoAction, map: "menu_item_tagging_menu_item_tags_fk")
+  menu_items           menu_items     @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade, onUpdate: NoAction, map: "menu_item_tagging_menu_items_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model menu_item_tags {
+  menu_item_tag_id  Int                 @id(map: "menu_item_tags_pk") @default(autoincrement())
+  name              String              @unique(map: "menu_item_tags_unique") @db.VarChar
+  description       String              @db.VarChar
+  menu_item_tagging menu_item_tagging[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model menu_items {
+  menu_item_id                                                  Int                     @id(map: "menu_items_pk") @default(autoincrement())
+  name                                                          String                  @db.VarChar
+  description                                                   String                  @db.VarChar
+  unit_price                                                    Decimal                 @default(0.00) @db.Decimal(10, 2)
+  status                                                        menu_item_status_type
+  type                                                          menu_item_type
+  combo_description_combo_description_combo_item_idTomenu_items combo_description[]     @relation("combo_description_combo_item_idTomenu_items")
+  combo_description_combo_description_menu_item_idTomenu_items  combo_description[]     @relation("combo_description_menu_item_idTomenu_items")
+  customer_order_items                                          customer_order_items[]
+  menu_item_ingredients                                         menu_item_ingredients[]
+  menu_item_tagging                                             menu_item_tagging[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model restaurant_table {
+  restaurant_table_id Int                          @id(map: "restaurant_table_pk") @default(autoincrement())
+  capacity            Int                          @default(1) @db.SmallInt
+  status              restaurant_table_status_type @default(available)
+  qrtoken             String                       @default("token")
+  table_number        Int                          @unique(map: "restaurant_table_unique") @db.SmallInt
+  customer_order      customer_order[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model storage_rooms {
+  storage_room_id            Int                          @id(map: "storage_rooms_pk") @default(autoincrement())
+  name                       String                       @db.VarChar
+  description                String                       @default("") @db.VarChar
+  location                   String                       @db.VarChar
+  internal_supplies_location internal_supplies_location[]
+  menu_item_ingredients      menu_item_ingredients[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model supplier_catalog_items {
+  supplier_catalog_item_id Int                  @id(map: "supplier_catalog_items_pk") @default(autoincrement())
+  code                     String               @unique(map: "supplier_catalog_items_unique") @db.VarChar
+  name                     String               @db.VarChar
+  unit_price               Decimal              @default(0.01) @db.Decimal(10, 2)
+  conversion_factor        Decimal              @default(1.00) @db.Decimal
+  unit_of_measurement_id   Int
+  supplier_id              Int
+  internal_supply_id       Int
+  internal_supplies        internal_supplies    @relation(fields: [internal_supply_id], references: [internal_supply_id], onUpdate: NoAction, map: "supplier_catalog_items_internal_supplies_fk")
+  suppliers                suppliers            @relation(fields: [supplier_id], references: [supplier_id], onDelete: Cascade, onUpdate: NoAction, map: "supplier_catalog_items_suppliers_fk")
+  units_of_measurement     units_of_measurement @relation(fields: [unit_of_measurement_id], references: [unit_of_measurement_id], onUpdate: NoAction, map: "supplier_catalog_items_units_of_measurement_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model supplier_contact_methods {
+  supplier_contact_method_id Int                 @id(map: "supplier_contact_methods_pk") @default(autoincrement())
+  method                     contact_method_type
+  contact                    String              @db.VarChar
+  supplier_id                Int
+  suppliers                  suppliers           @relation(fields: [supplier_id], references: [supplier_id], onDelete: Cascade, onUpdate: NoAction, map: "supplier_contact_methods_suppliers_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model suppliers {
+  supplier_id              Int                        @id(map: "suppliers_pk") @default(autoincrement())
+  ruc                      String                     @unique(map: "suppliers_unique_ruc") @db.Char(11)
+  company_name             String                     @db.VarChar
+  supplier_catalog_items   supplier_catalog_items[]
+  supplier_contact_methods supplier_contact_methods[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model supply_tagging {
+  supply_tagging_id      Int                  @id(map: "supply_tagging_pk") @default(autoincrement())
+  internal_supply_tag_id Int
+  internal_supply_id     Int
+  internal_supplies      internal_supplies    @relation(fields: [internal_supply_id], references: [internal_supply_id], onUpdate: NoAction, map: "supply_tagging_internal_supplies_fk")
+  internal_supply_tags   internal_supply_tags @relation(fields: [internal_supply_tag_id], references: [internal_supply_tag_id], onUpdate: NoAction, map: "supply_tagging_internal_supply_tags_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model units_of_measurement {
+  name                   String                   @db.VarChar
+  unit_of_measurement_id Int                      @id(map: "units_of_measurement_pk") @default(autoincrement())
+  symbol                 String                   @unique(map: "units_of_measurement_unique") @db.VarChar
+  internal_supplies      internal_supplies[]
+  supplier_catalog_items supplier_catalog_items[]
+}
+
+enum contact_method_type {
+  email
+  phone
+  WhatsApp
+}
+
+enum customer_order_item_status_type {
+  pending
+  preparing
+  finished
+}
+
+enum customer_order_payment_status_type {
+  pending
+  paid
+}
+
+enum customer_order_status_type {
+  pending
+  preparing
+  on_the_way @map("on the way")
+  delivered
+}
+
+enum customer_order_type {
+  dine_in  @map("dine in")
+  take_out @map("take out")
+  delivery
+}
+
+enum menu_item_status_type {
+  available
+  out_of_stock @map("out of stock")
+  discontinued
+}
+
+enum menu_item_type {
+  combo
+  item
+}
+
+enum restaurant_table_status_type {
+  available
+  occupied
 }
