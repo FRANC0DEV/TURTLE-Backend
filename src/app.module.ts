@@ -5,7 +5,13 @@ import { InventoryModule } from './inventory/inventory.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 @Module({
-  imports: [ConfigModule.forRoot(), InventoryModule, PrismaModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    InventoryModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
