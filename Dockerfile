@@ -1,4 +1,4 @@
-ARG nodeImageTag=24.15.0-slim
+ARG nodeImageTag=24.15.0
 ARG workingDirectory=/usr/src/app
 # ==========================================
 # Stage 1: Base (Complete installation of dependencies)
