@@ -12,7 +12,7 @@ export class WarehouseController {
     @Query('name') name: ListWarehousesDto['name'],
     @Query('page') page: ListWarehousesDto['page'],
   ) {
-    return "lola12345"
+    return "lola"
   }
 
   @Post()
