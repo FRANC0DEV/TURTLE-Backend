@@ -1,6 +1,13 @@
 node_modules
 dist
+coverage
+test
+database
 *.log
 *.md
 .git
 .env.*
+.nvmrc
+.gitignore
+.eslintrc*
+.prettierrc*
