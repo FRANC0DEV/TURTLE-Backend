@@ -6,11 +6,11 @@ import { PrismaService } from '@src/prisma/prisma.service';
 export class WarehouseService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: Prisma.warehouseCreateInput) {
-    return this.prisma.warehouse.create({ data });
-  }
+  // create(data: Prisma.warehouseCreateInput) {
+  //   return this.prisma.warehouse.create({ data });
+  // }
 
-  findAll(listWarehouseDto: ListWarehousesDto) {
-    return this.prisma.warehouse.findMany({});
-  }
+  // findAll(listWarehouseDto: ListWarehousesDto) {
+  //   return this.prisma.warehouse.findMany({});
+  // }
 }
